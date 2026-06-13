@@ -32,13 +32,18 @@ while True:
 
     try:
 
-        data = requests.get(
+        response = requests.get(
+    "https://back.echerha.gov.ua/api/v4/workload/1",
+    headers={
+        "User-Agent": "Mozilla/5.0"
+    },
+    timeout=30
+)
 
-            "https://back.echerha.gov.ua/api/v4/workload/1",
+print("STATUS:", response.status_code)
+print("TEXT:", response.text[:200])
 
-            timeout=30
-
-        ).json()
+data = response.json()
 
         checkpoints = data["checkpoints"]
 
