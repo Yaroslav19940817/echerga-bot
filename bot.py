@@ -33,17 +33,24 @@ while True:
     try:
 
         response = requests.get(
-    "https://back.echerha.gov.ua/api/v4/workload/1",
-    headers={
-        "User-Agent": "Mozilla/5.0"
-    },
-    timeout=30
-)
 
-print("STATUS:", response.status_code)
-print("TEXT:", response.text[:200])
+            "https://back.echerha.gov.ua/api/v4/workload/1",
 
-data = response.json()
+            headers={
+
+                "User-Agent": "Mozilla/5.0"
+
+            },
+
+            timeout=30
+
+        )
+
+        print("STATUS:", response.status_code)
+
+        print("TEXT:", response.text[:200])
+
+        data = response.json()
 
         checkpoints = data["checkpoints"]
 
@@ -83,6 +90,6 @@ data = response.json()
 
     except Exception as e:
 
-        print(e)
+        print("ERROR:", e)
 
     time.sleep(900)
