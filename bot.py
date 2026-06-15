@@ -5,10 +5,12 @@ import os
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
 
-# Поріг у хвилинах (4 години)
-LIMIT_MINUTES = 240
+LIMIT_MINUTES = 240  # 4 години
 
 already_sent = False
+
+# Встав свій Bearer токен сюди
+ECHERHA_TOKEN = "YOUR_BEARER_TOKEN"
 
 
 def send_message(text):
@@ -24,12 +26,21 @@ def send_message(text):
 
 while True:
     try:
+
+        headers = {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {ECHERHA_TOKEN}",
+            "X-Client-Locale": "uk",
+            "X-User-Agent": "UABorder/3.8.0 Web/1.1.0",
+            "Origin": "https://echerha.gov.ua",
+            "Referer": "https://echerha.gov.ua/",
+            "User-Agent": "Mozilla/5.0"
+        }
+
         response = requests.get(
             "https://back.echerha.gov.ua/api/v4/workload/1",
-            headers={
-                "User-Agent": "Mozilla/5.0",
-                "X-Client-Locale": "uk"
-            },
+            headers=headers,
             timeout=30
         )
 
