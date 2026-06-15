@@ -25,16 +25,19 @@ def send_message(text):
 while True:
     try:
         response = requests.get(
-            "https://back.echerha.gov.ua/api/v4/workload/1",
-            headers={
-                "User-Agent": "Mozilla/5.0"
-            },
-            timeout=30
-        )
+    "https://back.echerha.gov.ua/api/v4/workload/1",
+    headers={
+        "Accept": "application/json",
+        "User-Agent": "Mozilla/5.0",
+        "Referer": "https://echerha.gov.ua/"
+    },
+    timeout=30
+)
 
-        print("STATUS:", response.status_code)
+print("STATUS:", response.status_code)
+print("TEXT:", response.text[:500])
 
-        response.raise_for_status()
+response.raise_for_status()
 
         data = response.json()
 
