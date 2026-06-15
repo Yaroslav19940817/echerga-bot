@@ -5,19 +5,21 @@ import os
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
 
-LIMIT_MINUTES = 240  # 4 години
+# Поріг у хвилинах (4 години)
+LIMIT_MINUTES = 240
+
 already_sent = False
 
 
 def send_message(text):
-    response = requests.get(
+    requests.get(
         f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
         params={
             "chat_id": CHAT_ID,
             "text": text
-        }
+        },
+        timeout=30
     )
-    print("TELEGRAM STATUS:", response.status_code)
 
 
 while True:
@@ -25,30 +27,35 @@ while True:
         response = requests.get(
             "https://back.echerha.gov.ua/api/v4/workload/1",
             headers={
-                "Accept": "application/json",
                 "User-Agent": "Mozilla/5.0",
-                "Referer": "https://echerha.gov.ua/"
+                "X-Client-Locale": "uk"
             },
             timeout=30
         )
 
         print("STATUS:", response.status_code)
-        print("TEXT:", response.text[:300])
+        print("TEXT:", response.text[:500])
+
+        response.raise_for_status()
 
         data = response.json()
 
+        checkpoints = data["data"]
+
         chop = next(
-            item for item in data["data"]
+            item for item in checkpoints
             if item["id"] == 17
         )
 
         wait_time = chop["wait_time"]
         vehicles = chop["vehicle_in_active_queues_counts"]
 
-        print("WAIT:", wait_time)
-        print("VEHICLES:", vehicles)
+        print(
+            f"Чоп-Захонь | wait_time={wait_time} хв | vehicles={vehicles}"
+        )
 
         if wait_time >= LIMIT_MINUTES and not already_sent:
+
             hours = round(wait_time / 60, 1)
 
             send_message(
@@ -60,7 +67,7 @@ while True:
 
             already_sent = True
 
-        elif wait_time < LIMIT_MINUTES:
+        if wait_time < LIMIT_MINUTES:
             already_sent = False
 
     except Exception as e:
